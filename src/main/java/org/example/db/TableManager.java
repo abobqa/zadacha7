@@ -32,29 +32,31 @@ public class TableManager {
         Scanner input = new Scanner(System.in);
         String tableName = "";
 
-        while (true) {
-            System.out.println("Введите КОРРЕКТНОЕ название таблицы (латиница, без пробелов). Для выхода введите '0':");
-            String choice = input.nextLine();
+        try {
+            boolean exit = false;
+            String choice;
+            while (!exit) {
+                System.out.println("Введите КОРРЕКТНОЕ название таблицы, при отсутствии её, она создастся.Для выхода введите '0'");
+                choice = input.nextLine();
+                if (choice.equals("0")) {
+                    exit = true;
+                } else if (choice.matches("\\w+")) {
+                    tableName = choice;
+                    break;
+                } else {
+                    System.out.println("Ошибка ввода, повторите");
+                }
 
-            if (choice.equals("0")) {
-                return null;
-            } else if (choice.matches("\\w+")) {
-                tableName = choice;
-                break;
-            } else {
-                System.out.println("Ошибка ввода, повторите.");
             }
-        }
-
-        String query = "CREATE TABLE IF NOT EXISTS " + tableName + " (id SERIAL PRIMARY KEY, values_array INTEGER[]);";
-
-        try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(query);
-            System.out.println("Таблица " + tableName + " создана.");
+            if (!exit) {
+                String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (id SERIAL PRIMARY KEY, number BIGINT, is_even BOOLEAN);";
+                Statement stmt = conn.createStatement();
+                stmt.executeUpdate(sql);
+            }
         } catch (SQLException e) {
-            System.out.println("Ошибка создания таблицы: " + e.getMessage());
+            System.out.println("Ошибка при работе с базой данных: " + e.getMessage());
+            tableName = null;
         }
-
         return tableName;
     }
 }

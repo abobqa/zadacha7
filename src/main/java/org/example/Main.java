@@ -34,9 +34,10 @@ public class Main {
                     case "2" -> {
                         try {
                             tableName = tableManager.createTable();
-                            tableChosen = true;
+                            if (tableName == null) tableChosen = false;
+                            else tableChosen = true;
                         } catch (Exception e) {
-                            System.out.println("Ошиюка при выборе таблицы " + e.getMessage());
+                            System.out.println("Ошибка при выборе таблицы " + e.getMessage());
                         }
                     }
                     case "3" -> {
